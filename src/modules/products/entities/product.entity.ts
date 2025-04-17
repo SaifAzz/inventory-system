@@ -49,7 +49,11 @@ export class Product {
   @DeleteDateColumn()
   deletedAt?: Date;
 
-  @ManyToOne(() => Category)
+  @Index()
+  @Column()
+  categoryId: number;
+
+  @ManyToOne(() => Category, (category) => category.products)
   category: Category;
 
   @ManyToMany(() => Supplier, (supplier) => supplier.products)

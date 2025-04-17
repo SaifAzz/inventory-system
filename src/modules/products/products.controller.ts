@@ -7,8 +7,15 @@ import {
   Param,
   Delete,
   UseInterceptors,
+  UseGuards,
+  Query,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -19,7 +26,8 @@ import {
   ApiPagination,
   PaginationParams,
 } from '../../common/decorators/pagination.decorator';
-import { Roles } from '../../common/decorators/roles.decorator';
+import { Roles } from '../../modules/auth/decorators/roles.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('Products')
 @ApiTenantId()
@@ -29,6 +37,7 @@ import { Roles } from '../../common/decorators/roles.decorator';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   @Roles('admin')
   @ApiOperation({ summary: 'Create a new product' })
@@ -39,8 +48,16 @@ export class ProductsController {
   @Get()
   @ApiOperation({ summary: 'Get all products' })
   @ApiPagination()
+  @Roles('admin')
   findAll(@Pagination() pagination: PaginationParams) {
     return this.productsService.findAll(pagination);
+  }
+
+  @Get('search')
+  @ApiOperation({ summary: 'Search products by name' })
+  @ApiQuery({ name: 'query', required: true })
+  search(@Query('query') query: string) {
+    return this.productsService.search(query);
   }
 
   @Get(':id')

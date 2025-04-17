@@ -4,6 +4,10 @@ import { ProductsModule } from './modules/products/products.module';
 import { SuppliersModule } from './modules/suppliers/suppliers.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { TenantsModule } from './modules/tenants/tenants.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { SeedModule } from './seeds/seed.module';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
 
 import { TenantMiddleware } from './common/middleware/tenant.middleware';
 import { TenantContextService } from './common/services/tenant-context.service';
@@ -27,11 +31,22 @@ import { Tenant } from './modules/tenants/entities/tenant.entity';
     SuppliersModule,
     CategoriesModule,
     TenantsModule,
+    AuthModule,
+    SeedModule,
   ],
-  providers: [TenantContextService, TenantsService, TenantMiddleware],
+  controllers: [AppController],
+  providers: [
+    AppService,
+    TenantContextService,
+    TenantsService,
+    TenantMiddleware,
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(TenantMiddleware).exclude('v1/tenants').forRoutes('*');
+    consumer
+      .apply(TenantMiddleware)
+      .exclude('/', 'v1/tenants', 'v1/auth/login')
+      .forRoutes('*');
   }
 }

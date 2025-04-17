@@ -7,6 +7,8 @@ describe('CategoriesController', () => {
   let controller: CategoriesController;
   let service: CategoriesService;
   let tenantContextService: TenantContextService;
+  const tenantId = '10ebd848-f530-403e-90c2-cb597bab053e';
+  const categoryId = '2';
 
   const mockCategoriesService = {
     create: jest.fn(),
@@ -17,6 +19,7 @@ describe('CategoriesController', () => {
 
   const mockTenantContextService = {
     setTenantId: jest.fn(),
+    getTenantId: jest.fn().mockReturnValue(tenantId),
   };
 
   beforeEach(async () => {
@@ -38,11 +41,15 @@ describe('CategoriesController', () => {
     service = module.get<CategoriesService>(CategoriesService);
     tenantContextService =
       module.get<TenantContextService>(TenantContextService);
+
+    // Mock the request with tenant ID
+    jest
+      .spyOn(tenantContextService, 'setTenantId')
+      .mockImplementation(() => {});
   });
 
   describe('create', () => {
     it('should create a category', async () => {
-      const tenantId = '10ebd848-f530-403e-90c2-cb597bab053e';
       const createDto = {
         name: 'Test Category',
         description: 'Test Description',
@@ -51,7 +58,10 @@ describe('CategoriesController', () => {
 
       mockCategoriesService.create.mockResolvedValue(expectedResult);
 
-      const result = await controller.create(tenantId, createDto);
+      // Set the tenant ID before the test
+      tenantContextService.setTenantId(tenantId);
+
+      const result = await controller.create(createDto);
 
       expect(tenantContextService.setTenantId).toHaveBeenCalledWith(tenantId);
       expect(service.create).toHaveBeenCalledWith(createDto);
@@ -61,7 +71,6 @@ describe('CategoriesController', () => {
 
   describe('findAll', () => {
     it('should return all categories', async () => {
-      const tenantId = '10ebd848-f530-403e-90c2-cb597bab053e';
       const expectedResult = [
         { id: 1, name: 'Category 1' },
         { id: 2, name: 'Category 2' },
@@ -69,7 +78,10 @@ describe('CategoriesController', () => {
 
       mockCategoriesService.findAll.mockResolvedValue(expectedResult);
 
-      const result = await controller.findAll(tenantId);
+      // Set the tenant ID before the test
+      tenantContextService.setTenantId(tenantId);
+
+      const result = await controller.findAll();
 
       expect(tenantContextService.setTenantId).toHaveBeenCalledWith(tenantId);
       expect(result).toEqual(expectedResult);
@@ -78,13 +90,14 @@ describe('CategoriesController', () => {
 
   describe('findOne', () => {
     it('should return a category by id', async () => {
-      const tenantId = '10ebd848-f530-403e-90c2-cb597bab053e';
-      const categoryId = '2';
       const expectedResult = { id: 2, name: 'Category 1' };
 
       mockCategoriesService.findOne.mockResolvedValue(expectedResult);
 
-      const result = await controller.findOne(tenantId, categoryId);
+      // Set the tenant ID before the test
+      tenantContextService.setTenantId(tenantId);
+
+      const result = await controller.findOne(categoryId);
 
       expect(tenantContextService.setTenantId).toHaveBeenCalledWith(tenantId);
       expect(service.findOne).toHaveBeenCalledWith(+categoryId);
@@ -94,14 +107,15 @@ describe('CategoriesController', () => {
 
   describe('update', () => {
     it('should update a category', async () => {
-      const tenantId = '10ebd848-f530-403e-90c2-cb597bab053e';
-      const categoryId = '2';
       const updateDto = { name: 'Updated Category' };
       const expectedResult = { id: 2, ...updateDto };
 
       mockCategoriesService.update.mockResolvedValue(expectedResult);
 
-      const result = await controller.update(tenantId, categoryId, updateDto);
+      // Set the tenant ID before the test
+      tenantContextService.setTenantId(tenantId);
+
+      const result = await controller.update(categoryId, updateDto);
 
       expect(tenantContextService.setTenantId).toHaveBeenCalledWith(tenantId);
       expect(service.update).toHaveBeenCalledWith(+categoryId, updateDto);

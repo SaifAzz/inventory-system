@@ -7,17 +7,20 @@ describe('ProductsController', () => {
   let controller: ProductsController;
   let service: ProductsService;
   let tenantContextService: TenantContextService;
-
+  const tenantId = '7272daf4-d2d8-4738-bc2a-a20dd5bf94c6';
+  const productId = '1';
   const mockProductsService = {
     create: jest.fn(),
     findAll: jest.fn(),
     findOne: jest.fn(),
     update: jest.fn(),
     remove: jest.fn(),
+    search: jest.fn(),
   };
 
   const mockTenantContextService = {
     setTenantId: jest.fn(),
+    getTenantId: jest.fn().mockReturnValue(tenantId),
   };
 
   beforeEach(async () => {
@@ -39,11 +42,15 @@ describe('ProductsController', () => {
     service = module.get<ProductsService>(ProductsService);
     tenantContextService =
       module.get<TenantContextService>(TenantContextService);
+
+    // Mock the request with tenant ID
+    jest
+      .spyOn(tenantContextService, 'setTenantId')
+      .mockImplementation(() => {});
   });
 
   describe('create', () => {
     it('should create a product', async () => {
-      const tenantId = 'test-tenant-id';
       const createDto = {
         name: 'Test Product',
         description: 'Test Description',
@@ -56,6 +63,9 @@ describe('ProductsController', () => {
 
       mockProductsService.create.mockResolvedValue(expectedResult);
 
+      // Set the tenant ID before the test
+      tenantContextService.setTenantId(tenantId);
+
       const result = await controller.create(createDto);
 
       expect(tenantContextService.setTenantId).toHaveBeenCalledWith(tenantId);
@@ -66,7 +76,6 @@ describe('ProductsController', () => {
 
   describe('findAll', () => {
     it('should return all products', async () => {
-      const tenantId = 'test-tenant-id';
       const pagination = { page: 1, perPage: 10 };
       const expectedResult = {
         data: [{ id: 1, name: 'Product 1' }],
@@ -74,6 +83,9 @@ describe('ProductsController', () => {
       };
 
       mockProductsService.findAll.mockResolvedValue(expectedResult);
+
+      // Set the tenant ID before the test
+      tenantContextService.setTenantId(tenantId);
 
       const result = await controller.findAll(pagination);
 
@@ -85,11 +97,12 @@ describe('ProductsController', () => {
 
   describe('findOne', () => {
     it('should return a product by id', async () => {
-      const tenantId = 'test-tenant-id';
-      const productId = '1';
       const expectedResult = { id: 1, name: 'Product 1' };
 
       mockProductsService.findOne.mockResolvedValue(expectedResult);
+
+      // Set the tenant ID before the test
+      tenantContextService.setTenantId(tenantId);
 
       const result = await controller.findOne(productId);
 
@@ -101,12 +114,13 @@ describe('ProductsController', () => {
 
   describe('update', () => {
     it('should update a product', async () => {
-      const tenantId = 'test-tenant-id';
-      const productId = '1';
       const updateDto = { name: 'Updated Product' };
       const expectedResult = { id: 1, ...updateDto };
 
       mockProductsService.update.mockResolvedValue(expectedResult);
+
+      // Set the tenant ID before the test
+      tenantContextService.setTenantId(tenantId);
 
       const result = await controller.update(productId, updateDto);
 
@@ -118,8 +132,8 @@ describe('ProductsController', () => {
 
   describe('remove', () => {
     it('should remove a product', async () => {
-      const tenantId = 'test-tenant-id';
-      const productId = '1';
+      // Set the tenant ID before the test
+      tenantContextService.setTenantId(tenantId);
 
       await controller.remove(productId);
 

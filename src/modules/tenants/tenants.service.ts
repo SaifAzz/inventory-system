@@ -8,7 +8,6 @@ import { randomUUID } from 'crypto';
 import {
   TenantNotFoundException,
   InvalidTenantException,
-  TenantDeletionException,
 } from './exceptions/tenant.exceptions';
 
 @Injectable()
@@ -56,19 +55,6 @@ export class TenantsService {
     );
     return this.tenantRepository.save(updated);
   }
-
-  async remove(id: string): Promise<void> {
-    try {
-      await this.findOne(id);
-      await this.tenantRepository.softDelete(id);
-    } catch (error) {
-      if (error instanceof TenantNotFoundException) {
-        throw error;
-      }
-      throw new TenantDeletionException(id);
-    }
-  }
-
   async validateTenant(tenantId: string): Promise<Tenant> {
     const tenant = await this.tenantRepository
       .createQueryBuilder('tenant')

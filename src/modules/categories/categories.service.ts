@@ -29,7 +29,6 @@ export class CategoriesService {
 
   async findAll(): Promise<Category[]> {
     const tenantId = this.tenantContextService.getTenantId();
-
     return this.categoryRepository
       .createQueryBuilder('category')
       .leftJoinAndSelect('category.products', 'product')

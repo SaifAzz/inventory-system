@@ -7,6 +7,8 @@ describe('SuppliersController', () => {
   let controller: SuppliersController;
   let service: SuppliersService;
   let tenantContextService: TenantContextService;
+  const tenantId = 'test-tenant-id';
+  const supplierId = '1';
 
   const mockSuppliersService = {
     create: jest.fn(),
@@ -18,6 +20,7 @@ describe('SuppliersController', () => {
 
   const mockTenantContextService = {
     setTenantId: jest.fn(),
+    getTenantId: jest.fn().mockReturnValue(tenantId),
   };
 
   beforeEach(async () => {
@@ -39,11 +42,15 @@ describe('SuppliersController', () => {
     service = module.get<SuppliersService>(SuppliersService);
     tenantContextService =
       module.get<TenantContextService>(TenantContextService);
+
+    // Mock the request with tenant ID
+    jest
+      .spyOn(tenantContextService, 'setTenantId')
+      .mockImplementation(() => {});
   });
 
   describe('create', () => {
     it('should create a supplier', async () => {
-      const tenantId = 'test-tenant-id';
       const createDto = {
         name: 'Test Supplier',
         email: 'test@example.com',
@@ -53,6 +60,9 @@ describe('SuppliersController', () => {
       const expectedResult = { id: 1, ...createDto };
 
       mockSuppliersService.create.mockResolvedValue(expectedResult);
+
+      // Set the tenant ID before the test
+      tenantContextService.setTenantId(tenantId);
 
       const result = await controller.create(createDto);
 
@@ -64,7 +74,6 @@ describe('SuppliersController', () => {
 
   describe('findAll', () => {
     it('should return all suppliers', async () => {
-      const tenantId = 'test-tenant-id';
       const pagination = { page: 1, perPage: 10 };
       const expectedResult = {
         data: [{ id: 1, name: 'Supplier 1' }],
@@ -72,6 +81,9 @@ describe('SuppliersController', () => {
       };
 
       mockSuppliersService.findAll.mockResolvedValue(expectedResult);
+
+      // Set the tenant ID before the test
+      tenantContextService.setTenantId(tenantId);
 
       const result = await controller.findAll(pagination);
 
@@ -83,11 +95,12 @@ describe('SuppliersController', () => {
 
   describe('findOne', () => {
     it('should return a supplier by id', async () => {
-      const tenantId = 'test-tenant-id';
-      const supplierId = '1';
       const expectedResult = { id: 1, name: 'Supplier 1' };
 
       mockSuppliersService.findOne.mockResolvedValue(expectedResult);
+
+      // Set the tenant ID before the test
+      tenantContextService.setTenantId(tenantId);
 
       const result = await controller.findOne(supplierId);
 
@@ -99,12 +112,13 @@ describe('SuppliersController', () => {
 
   describe('update', () => {
     it('should update a supplier', async () => {
-      const tenantId = 'test-tenant-id';
-      const supplierId = '1';
       const updateDto = { name: 'Updated Supplier' };
       const expectedResult = { id: 1, ...updateDto };
 
       mockSuppliersService.update.mockResolvedValue(expectedResult);
+
+      // Set the tenant ID before the test
+      tenantContextService.setTenantId(tenantId);
 
       const result = await controller.update(supplierId, updateDto);
 
@@ -116,8 +130,8 @@ describe('SuppliersController', () => {
 
   describe('remove', () => {
     it('should remove a supplier', async () => {
-      const tenantId = 'test-tenant-id';
-      const supplierId = '1';
+      // Set the tenant ID before the test
+      tenantContextService.setTenantId(tenantId);
 
       await controller.remove(supplierId);
 

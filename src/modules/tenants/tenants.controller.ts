@@ -5,14 +5,18 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { TenantsService } from './tenants.service';
 import { CreateTenantDto } from './dto/create-tenant.dto';
 import { UpdateTenantDto } from './dto/update-tenant.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+
 @ApiTags('Tenants')
 @Controller('tenants')
+@ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 export class TenantsController {
   constructor(private readonly tenantsService: TenantsService) {}
 
@@ -39,11 +43,5 @@ export class TenantsController {
   @ApiOperation({ summary: 'Update a tenant' })
   update(@Param('id') id: string, @Body() updateTenantDto: UpdateTenantDto) {
     return this.tenantsService.update(id, updateTenantDto);
-  }
-
-  @Delete(':id')
-  @ApiOperation({ summary: 'Delete a tenant' })
-  remove(@Param('id') id: string) {
-    return this.tenantsService.remove(id);
   }
 }

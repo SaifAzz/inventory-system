@@ -12,6 +12,8 @@ import helmet from 'helmet';
 import compression from 'compression';
 import { config } from 'dotenv';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
+import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
+import { RolesGuard } from './modules/auth/guards/roles.guard';
 config();
 
 async function bootstrap() {
@@ -35,6 +37,10 @@ async function bootstrap() {
     defaultVersion: ['1'],
   });
 
+  // Set up global guards
+  const reflector = app.get(Reflector);
+  app.useGlobalGuards(new JwtAuthGuard(reflector), new RolesGuard(reflector));
+
   const swaggerConfig = new DocumentBuilder()
     .setTitle('Inventory Management API')
     .setDescription('API for managing inventory in a multi-tenant ERP system')
@@ -43,6 +49,7 @@ async function bootstrap() {
     .addTag('Categories')
     .addTag('Suppliers')
     .addTag('Tenants')
+    .addTag('Auth')
     .addBearerAuth()
     .build();
 

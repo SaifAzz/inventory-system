@@ -5,11 +5,13 @@ import {
   OneToMany,
   ManyToOne,
   DeleteDateColumn,
+  Index,
 } from 'typeorm';
 import { Product } from '../../products/entities/product.entity';
 import { Tenant } from '../../tenants/entities/tenant.entity';
 
 @Entity()
+@Index('idx_tenant_id', ['tenantId'])
 export class Category {
   @PrimaryGeneratedColumn()
   id: number;

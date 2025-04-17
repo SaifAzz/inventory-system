@@ -32,7 +32,7 @@ export class ProductsService {
   ) {}
 
   private get tenantId(): string {
-    return this.tenantContext.getTenantId(); // will throw if not set
+    return this.tenantContext.getTenantId();
   }
 
   async create(dto: CreateProductDto): Promise<Product> {
@@ -47,7 +47,7 @@ export class ProductsService {
     const product = this.productRepository.create({
       ...dto,
       tenantId: this.tenantId,
-      category,
+      categoryId: dto.categoryId,
       suppliers,
     });
 
@@ -108,7 +108,7 @@ export class ProductsService {
     if (dto.categoryId) {
       const category = await this.categoriesService.findOne(dto.categoryId);
       if (!category) throw new CategoryNotFoundException();
-      product.category = category;
+      product.categoryId = dto.categoryId;
     }
 
     if (dto.supplierIds) {
@@ -129,20 +129,24 @@ export class ProductsService {
   }
 
   async search(query: string): Promise<Product[]> {
-    const tenantId = this.tenantContext.getTenantId();
-
-    return this.productRepository
-      .createQueryBuilder('product')
-      .leftJoinAndSelect('product.category', 'category')
-      .leftJoinAndSelect('product.suppliers', 'supplier')
-      .where(
-        'product.name ILIKE :query AND product.tenantId = :tenantId AND product.deletedAt IS NULL',
-        {
-          query: `%${query}%`,
-          tenantId,
-        },
-      )
-      .getMany();
+    try {
+      const tenantId = this.tenantContext.getTenantId();
+      return this.productRepository
+        .createQueryBuilder('product')
+        .leftJoinAndSelect('product.category', 'category')
+        .leftJoinAndSelect('product.suppliers', 'supplier')
+        .where(
+          'product.name ILIKE :query AND product.tenantId = :tenantId AND product.deletedAt IS NULL',
+          {
+            query: `%${query}%`,
+            tenantId,
+          },
+        )
+        .getMany();
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 
   async calculateTotalInventoryValue(): Promise<{ totalValue: number }> {
