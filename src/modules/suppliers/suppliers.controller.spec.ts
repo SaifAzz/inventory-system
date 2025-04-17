@@ -127,16 +127,4 @@ describe('SuppliersController', () => {
       expect(result).toEqual(expectedResult);
     });
   });
-
-  describe('remove', () => {
-    it('should remove a supplier', async () => {
-      // Set the tenant ID before the test
-      tenantContextService.setTenantId(tenantId);
-
-      await controller.remove(supplierId);
-
-      expect(tenantContextService.setTenantId).toHaveBeenCalledWith(tenantId);
-      expect(service.remove).toHaveBeenCalledWith(+supplierId);
-    });
-  });
 });

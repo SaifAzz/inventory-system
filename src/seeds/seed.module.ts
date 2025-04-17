@@ -7,11 +7,8 @@ import { User } from '../modules/auth/entities/user.entity';
 import { Tenant } from '../modules/tenants/entities/tenant.entity';
 
 @Module({
-  imports: [
-    CommandModule,
-    TypeOrmModule.forFeature([User, Tenant]),
-  ],
+  imports: [CommandModule, TypeOrmModule.forFeature([User, Tenant])],
   providers: [UserSeed, TenantSeed],
   exports: [UserSeed, TenantSeed],
 })
-export class SeedModule {} 
+export class SeedModule {}

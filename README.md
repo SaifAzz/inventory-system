@@ -95,7 +95,7 @@ npm run start:prod
 npm run migration:run
 
 # Seed the database with initial data
-npm run seed
+npm run seed:all
 ```
 
 ## API Documentation
@@ -158,6 +158,6 @@ npm run test:cov
 [MIT](LICENSE)
 
 
-tenant-id : af971c81-54ca-4e66-ac40-a2f6714745a0
-email: admin@tenant2.com
-password: admin@tenant2.com
+tenant-id : d3af41b2-3fa1-425b-9dd4-bdce83c008bc
+email: admin@tenant3.com
+password: admin123

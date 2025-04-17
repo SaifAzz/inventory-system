@@ -14,6 +14,12 @@ export class CategoryNotFoundException extends HttpException {
 
 export class SuppliersNotFoundException extends HttpException {
   constructor() {
+    super('Supplier not found', HttpStatus.NOT_FOUND);
+  }
+}
+
+export class OneOrMoreSuppliersNotFoundException extends HttpException {
+  constructor() {
     super('One or more suppliers not found', HttpStatus.NOT_FOUND);
   }
 }

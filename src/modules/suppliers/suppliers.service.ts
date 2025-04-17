@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, IsNull, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Supplier } from './entities/supplier.entity';
 import { CreateSupplierDto } from './dto/create-supplier.dto';
 import { UpdateSupplierDto } from './dto/update-supplier.dto';
@@ -8,7 +8,7 @@ import { TenantContextService } from '../../common/services/tenant-context.servi
 import { PaginationParams } from '../../common/decorators/pagination.decorator';
 import {
   SupplierNotFoundException,
-  SupplierDeletionException,
+  InvalidSupplierDataException,
 } from '../../common/exceptions/supplier.exceptions';
 
 @Injectable()
@@ -21,6 +21,17 @@ export class SuppliersService {
 
   async create(createSupplierDto: CreateSupplierDto): Promise<Supplier> {
     const tenantId = this.tenantContextService.getTenantId();
+
+    const existingSupplier = await this.supplierRepository.findOne({
+      where: { email: createSupplierDto.email, tenantId },
+    });
+
+    if (existingSupplier) {
+      throw new InvalidSupplierDataException(
+        `Supplier with email ${createSupplierDto.email} already exists`,
+      );
+    }
+
     const supplier = this.supplierRepository.create({
       ...createSupplierDto,
       tenantId,
@@ -77,18 +88,6 @@ export class SuppliersService {
     return this.supplierRepository.save(updated);
   }
 
-  async remove(id: number): Promise<void> {
-    try {
-      await this.findOne(id);
-      await this.supplierRepository.softDelete(id);
-    } catch (error) {
-      if (error instanceof SupplierNotFoundException) {
-        throw error;
-      }
-      throw new SupplierDeletionException(id);
-    }
-  }
-
   async findByIds(ids: number[]): Promise<Supplier[]> {
     const tenantId = this.tenantContextService.getTenantId();
 
@@ -96,8 +95,11 @@ export class SuppliersService {
       where: {
         id: In(ids),
         tenantId,
-        deletedAt: IsNull(),
       },
     });
+  }
+
+  async remove(id: number): Promise<void> {
+    await this.supplierRepository.delete(id);
   }
 }

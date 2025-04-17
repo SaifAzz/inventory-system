@@ -6,9 +6,10 @@ import { CreateTenantDto } from './dto/create-tenant.dto';
 import { UpdateTenantDto } from './dto/update-tenant.dto';
 import { randomUUID } from 'crypto';
 import {
-  TenantNotFoundException,
   InvalidTenantException,
-} from './exceptions/tenant.exceptions';
+  TenantIdNotFoundException,
+  InvalidTenantIdFormatException,
+} from '../../common/exceptions/tenant.exceptions';
 
 @Injectable()
 export class TenantsService {
@@ -35,16 +36,32 @@ export class TenantsService {
   }
 
   async findOne(id: string): Promise<Tenant> {
-    const tenant = await this.tenantRepository
-      .createQueryBuilder('tenant')
-      .where('tenant.id = :id AND tenant.deletedAt IS NULL', { id })
-      .getOne();
+    try {
+      const tenant = await this.tenantRepository
+        .createQueryBuilder('tenant')
+        .where('tenant.id = :id AND tenant.deletedAt IS NULL', { id })
+        .getOne();
 
-    if (!tenant) {
-      throw new TenantNotFoundException(id);
+      if (!tenant) {
+        throw new TenantIdNotFoundException();
+      }
+
+      return tenant;
+    } catch (error: any) {
+      if (error instanceof TenantIdNotFoundException) {
+        throw error;
+      }
+
+      if (
+        error.message &&
+        typeof error.message === 'string' &&
+        error.message.includes('invalid input syntax for type uuid')
+      ) {
+        throw new InvalidTenantIdFormatException(id);
+      }
+
+      throw error;
     }
-
-    return tenant;
   }
 
   async update(id: string, updateTenantDto: UpdateTenantDto): Promise<Tenant> {
@@ -55,19 +72,36 @@ export class TenantsService {
     );
     return this.tenantRepository.save(updated);
   }
+
   async validateTenant(tenantId: string): Promise<Tenant> {
-    const tenant = await this.tenantRepository
-      .createQueryBuilder('tenant')
-      .where(
-        'tenant.id = :tenantId AND tenant.isActive = true AND tenant.deletedAt IS NULL',
-        { tenantId },
-      )
-      .getOne();
+    try {
+      const tenant = await this.tenantRepository
+        .createQueryBuilder('tenant')
+        .where(
+          'tenant.id = :tenantId AND tenant.isActive = true AND tenant.deletedAt IS NULL',
+          { tenantId },
+        )
+        .getOne();
 
-    if (!tenant) {
-      throw new InvalidTenantException();
+      if (!tenant) {
+        throw new InvalidTenantException();
+      }
+
+      return tenant;
+    } catch (error: any) {
+      if (error instanceof InvalidTenantException) {
+        throw error;
+      }
+
+      if (
+        error.message &&
+        typeof error.message === 'string' &&
+        error.message.includes('invalid input syntax for type uuid')
+      ) {
+        throw new InvalidTenantIdFormatException(tenantId);
+      }
+
+      throw error;
     }
-
-    return tenant;
   }
 }

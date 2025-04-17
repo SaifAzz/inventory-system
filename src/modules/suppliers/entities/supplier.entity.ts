@@ -3,7 +3,6 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToMany,
-  DeleteDateColumn,
   Index,
   ManyToOne,
 } from 'typeorm';
@@ -29,7 +28,8 @@ export class Supplier {
     example: 'contact@supplier.com',
     description: 'The email address of the supplier',
   })
-  @Column({ unique: true })
+  @Column()
+  @Index(['tenantId', 'email'], { unique: true })
   email: string;
 
   @Column()
@@ -44,9 +44,6 @@ export class Supplier {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
-
-  @DeleteDateColumn()
-  deletedAt?: Date;
 
   @ManyToMany(() => Product, (product) => product.suppliers)
   products: Product[];

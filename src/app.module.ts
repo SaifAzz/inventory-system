@@ -25,6 +25,7 @@ import { Tenant } from './modules/tenants/entities/tenant.entity';
       database: process.env.DB_NAME,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
+      // logging: true,
     }),
     TypeOrmModule.forFeature([Tenant]),
     ProductsModule,

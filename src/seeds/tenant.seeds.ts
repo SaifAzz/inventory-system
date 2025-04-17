@@ -26,6 +26,7 @@ export class TenantSeed {
 
       const tenants = [
         {
+          id: 'd3af41b2-3fa1-425b-9dd4-bdsce83c008bc',
           name: 'Tenant One',
           email: 'tenant1@example.com',
           phone: '555-123-4567',
@@ -33,6 +34,7 @@ export class TenantSeed {
           apiKey: uuidv4(),
         },
         {
+          id: 'd3af41b2-3fa1-425b-9dd4-bdce83c008ba',
           name: 'Tenant Two',
           email: 'tenant2@example.com',
           phone: '555-234-5678',
@@ -40,6 +42,7 @@ export class TenantSeed {
           apiKey: uuidv4(),
         },
         {
+          id: 'd3af41b2-3fa1-425b-9dd4-bdce83c008bc',
           name: 'Tenant Three',
           email: 'tenant3@example.com',
           phone: '555-345-6789',

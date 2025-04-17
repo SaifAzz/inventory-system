@@ -53,8 +53,15 @@ export class ProductsController {
     return this.productsService.findAll(pagination);
   }
 
+  @Get('total-inventory-value')
+  @Roles('admin')
+  @ApiOperation({ summary: 'Get total inventory value' })
+  getTotalInventoryValue() {
+    return this.productsService.calculateTotalInventoryValue();
+  }
+
   @Get('search')
-  @ApiOperation({ summary: 'Search products by name' })
+  @ApiOperation({ summary: 'Search products by name and description' })
   @ApiQuery({ name: 'query', required: true })
   search(@Query('query') query: string) {
     return this.productsService.search(query);

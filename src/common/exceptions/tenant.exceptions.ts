@@ -32,3 +32,15 @@ export class DuplicateTenantException extends HttpException {
     super(`Tenant with name "${name}" already exists`, HttpStatus.CONFLICT);
   }
 }
+
+export class TenantIdNotFoundException extends HttpException {
+  constructor() {
+    super('Tenant with given id not found', HttpStatus.NOT_FOUND);
+  }
+}
+
+export class InvalidTenantIdFormatException extends HttpException {
+  constructor(tenantId: string) {
+    super(`Invalid tenant ID format: "${tenantId}"`, HttpStatus.BAD_REQUEST);
+  }
+}

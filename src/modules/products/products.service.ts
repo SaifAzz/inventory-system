@@ -43,7 +43,6 @@ export class ProductsService {
     if (suppliers.length !== dto.supplierIds.length) {
       throw new SuppliersNotFoundException();
     }
-
     const product = this.productRepository.create({
       ...dto,
       tenantId: this.tenantId,
@@ -136,7 +135,7 @@ export class ProductsService {
         .leftJoinAndSelect('product.category', 'category')
         .leftJoinAndSelect('product.suppliers', 'supplier')
         .where(
-          'product.name ILIKE :query AND product.tenantId = :tenantId AND product.deletedAt IS NULL',
+          '(product.name ILIKE :query OR product.description ILIKE :query) AND product.tenantId = :tenantId AND product.deletedAt IS NULL',
           {
             query: `%${query}%`,
             tenantId,
