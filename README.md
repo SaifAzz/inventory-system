@@ -25,15 +25,37 @@ A modular inventory management system for an ERP project built with NestJS and T
 
 ```
 src/
-├── common/            # Common utilities, interceptors, decorators
-├── config/            # Configuration settings
-├── modules/
-│   ├── auth/          # Authentication module
-│   ├── categories/    # Categories module
-│   ├── products/      # Products module
-│   ├── suppliers/     # Suppliers module
-│   └── tenants/       # Tenants module
-└── seeds/             # Database seed data
+├── common/                  # Common utilities, interceptors, decorators
+│   ├── decorators/          # Custom decorators
+│   ├── exceptions/          # Exception handling
+│   ├── interfaces/          # TypeScript interfaces
+│   ├── interceptors/        # NestJS interceptors
+│   ├── middleware/          # HTTP middleware
+│   └── services/            # Shared services
+├── config/                  # Configuration settings
+│   └── typeorm.config.ts    # Database connection configuration
+├── modules/                 # Feature modules
+│   ├── auth/                # Authentication module
+│   ├── categories/          # Categories module
+│   ├── products/            # Products module
+│       ├── dto/             # Data Transfer Objects
+│       ├── entities/        # Database entities
+│       ├── products.controller.ts
+│       ├── products.module.ts
+│       └── products.service.ts
+│   ├── suppliers/           # Suppliers module
+│   └── tenants/             # Tenants module
+├── seeds/                   # Database seed data
+│   ├── category.seeds.ts
+│   ├── supplier.seeds.ts
+│   ├── tenant.seeds.ts
+│   ├── user.seeds.ts
+│   └── seed.module.ts
+├── app.controller.ts        # Main app controller
+├── app.module.ts            # Main app module
+├── app.service.ts           # Main app service
+├── cli.ts                   # Command line interface
+└── main.ts                  # Application entry point
 ```
 
 ## Prerequisites
