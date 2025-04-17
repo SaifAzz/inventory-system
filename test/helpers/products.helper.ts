@@ -97,12 +97,12 @@ export const deleteProduct = (
  * Creates mock product data
  */
 export const createMockProduct = (
-  id: number | string = 1,
+  id: number = 1,
   name: string = 'Test Product',
   price: number = 100,
   quantity: number = 10,
-  categoryId: number | string = 1,
-  supplierIds: (number | string)[] = [1],
+  categoryId: number = 1,
+  supplierIds: number[] = [1],
   tenantId: string = '7272daf4-d2d8-4738-bc2a-a20dd5bf94c6',
 ): Partial<Product> => {
   return {
@@ -112,6 +112,30 @@ export const createMockProduct = (
     quantity,
     categoryId,
     tenantId,
-    suppliers: supplierIds.map(id => ({ id })),
+    suppliers: supplierIds.map((supplierId) => ({
+      id: supplierId,
+      tenantId,
+      name: 'Supplier Name',
+      email: 'supplier@example.com',
+      phone: '123-456-7890',
+      address: 'Supplier Address',
+      contactPerson: 'Contact Person',
+      notes: 'Notes',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      products: [],
+      tenant: {
+        id: tenantId,
+        name: 'Tenant Name',
+        email: 'tenant@example.com',
+        phone: '123-456-7890',
+        address: 'Tenant Address',
+        apiKey: 'api-key-example',
+        isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        deletedAt: new Date(0),
+      },
+    })),
   };
-}; 
+};

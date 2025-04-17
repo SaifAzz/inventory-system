@@ -26,7 +26,7 @@ export class TenantSeed {
 
       const tenants = [
         {
-          id: 'd3af41b2-3fa1-425b-9dd4-bdsce83c008bc',
+          id: '7272daf4-d2d8-4738-bc2a-a20dd5bf94c6',
           name: 'Tenant One',
           email: 'tenant1@example.com',
           phone: '555-123-4567',

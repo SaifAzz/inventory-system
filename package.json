@@ -22,7 +22,9 @@
     "seed:tenants": "ts-node src/cli.ts create:tenants",
     "seed:users": "ts-node src/cli.ts create:users",
     "seed:superadmin": "ts-node src/cli.ts create:superadmin",
-    "seed:all": "npm run seed:tenants && npm run seed:users && npm run seed:superadmin",
+    "seed:suppliers": "ts-node src/cli.ts create:suppliers",
+    "seed:categories": "ts-node src/cli.ts create:categories",
+    "seed:all": "npm run seed:tenants && npm run seed:users && npm run seed:superadmin && npm run seed:suppliers && npm run seed:categories",
     "cli": "ts-node src/cli.ts"
   },
   "dependencies": {

@@ -15,9 +15,12 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/ (GET)', async () => {
-    const res = await request(app.getHttpServer()).get('/');
-    expect(res.status).toBe(200);
-    expect(res.text).toBe('Hello Uranus!');
+  describe('root', () => {
+    it('should return "Hello Uranus!"', () => {
+      return request(app.getHttpServer())
+        .get('/')
+        .expect(200)
+        .expect('Hello Uranus!');
+    });
   });
 });

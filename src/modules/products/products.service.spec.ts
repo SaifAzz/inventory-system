@@ -72,10 +72,13 @@ describe('ProductsService', () => {
       ],
     }).compile();
 
-    productRepository = module.get<Repository<Product>>(getRepositoryToken(Product));
+    productRepository = module.get<Repository<Product>>(
+      getRepositoryToken(Product),
+    );
     categoriesService = module.get<CategoriesService>(CategoriesService);
     suppliersService = module.get<SuppliersService>(SuppliersService);
-    tenantContextService = module.get<TenantContextService>(TenantContextService);
+    tenantContextService =
+      module.get<TenantContextService>(TenantContextService);
   });
 
   beforeEach(async () => {
@@ -99,28 +102,29 @@ describe('ProductsService', () => {
       };
 
       const category: Category = {
-        id: 1, 
-        name: 'Test Category', 
+        id: 1,
+        name: 'Test Category',
         description: 'Description',
         tenantId,
         products: [],
         tenant: mockTenant,
-        deletedAt: undefined
+        deletedAt: undefined,
       };
-      
-      const suppliers: Supplier[] = [{
-        id: 1, 
-        name: 'Test Supplier',
-        email: 'supplier@test.com',
-        phone: '1234567890',
-        tenantId,
-        products: [],
-        tenant: mockTenant,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        deletedAt: undefined
-      }];
-      
+
+      const suppliers: Supplier[] = [
+        {
+          id: 1,
+          name: 'Test Supplier',
+          email: 'supplier@test.com',
+          phone: '1234567890',
+          tenantId,
+          products: [],
+          tenant: mockTenant,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ];
+
       const expectedProduct = {
         id: 1,
         ...createProductDto,
@@ -131,8 +135,12 @@ describe('ProductsService', () => {
 
       jest.spyOn(categoriesService, 'findOne').mockResolvedValue(category);
       jest.spyOn(suppliersService, 'findByIds').mockResolvedValue(suppliers);
-      jest.spyOn(productRepository, 'create').mockReturnValue(expectedProduct as any);
-      jest.spyOn(productRepository, 'save').mockResolvedValue(expectedProduct as any);
+      jest
+        .spyOn(productRepository, 'create')
+        .mockReturnValue(expectedProduct as any);
+      jest
+        .spyOn(productRepository, 'save')
+        .mockResolvedValue(expectedProduct as any);
 
       expect(await service.create(createProductDto)).toEqual(expectedProduct);
       expect(categoriesService.findOne).toHaveBeenCalledWith(1);
@@ -173,15 +181,15 @@ describe('ProductsService', () => {
       };
 
       const category: Category = {
-        id: 1, 
+        id: 1,
         name: 'Test Category',
         description: 'Description',
         tenantId,
         products: [],
         tenant: mockTenant,
-        deletedAt: undefined
+        deletedAt: undefined,
       };
-      
+
       jest.spyOn(categoriesService, 'findOne').mockResolvedValue(category);
       jest.spyOn(suppliersService, 'findByIds').mockResolvedValue([]);
 
@@ -200,7 +208,10 @@ describe('ProductsService', () => {
       ];
       const totalProducts = 2;
 
-      mockQueryBuilder.getManyAndCount.mockResolvedValue([products, totalProducts]);
+      mockQueryBuilder.getManyAndCount.mockResolvedValue([
+        products,
+        totalProducts,
+      ]);
 
       const result = await service.findAll(pagination);
 
@@ -208,7 +219,9 @@ describe('ProductsService', () => {
       expect(result.meta.total).toEqual(totalProducts);
       expect(result.meta.page).toEqual(pagination.page);
       expect(result.meta.perPage).toEqual(pagination.perPage);
-      expect(result.meta.totalPages).toEqual(Math.ceil(totalProducts / pagination.perPage));
+      expect(result.meta.totalPages).toEqual(
+        Math.ceil(totalProducts / pagination.perPage),
+      );
       expect(mockQueryBuilder.where).toHaveBeenCalledWith(
         'product.tenantId = :tenantId AND product.deletedAt IS NULL',
         { tenantId },
@@ -256,7 +269,9 @@ describe('ProductsService', () => {
       };
 
       jest.spyOn(service, 'findOne').mockResolvedValue(existingProduct as any);
-      jest.spyOn(productRepository, 'save').mockResolvedValue(updatedProduct as any);
+      jest
+        .spyOn(productRepository, 'save')
+        .mockResolvedValue(updatedProduct as any);
 
       expect(await service.update(1, updateProductDto)).toEqual(updatedProduct);
       expect(service.findOne).toHaveBeenCalledWith(1);
@@ -293,4 +308,4 @@ describe('ProductsService', () => {
       expect(result).toEqual({ totalValue: 0 });
     });
   });
-}); 
+});
